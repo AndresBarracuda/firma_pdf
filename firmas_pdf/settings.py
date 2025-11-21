@@ -26,7 +26,9 @@ SECRET_KEY = 'django-insecure-298o$-+!1wg7%p9!hw&8ry^wdcg3k-t5&y6@rrk3610cdys&oh
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'firmapdf-production.up.railway.app',
+]
 
 
 # Application definition
