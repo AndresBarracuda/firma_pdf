@@ -30,7 +30,7 @@ ALLOWED_HOSTS = [
     'firmapdf-production.up.railway.app',
 ]
 
-# Application definition
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
