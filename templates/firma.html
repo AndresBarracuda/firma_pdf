@@ -65,5 +65,51 @@
         window.addEventListener('resize', () => setTimeout(syncStyleSize, 50));
     });
     </script>
+    <!-- Reemplazar el listener de click del canvas por uno que calcule coordenadas
+         en el sistema de coordenadas interno del canvas (canvas.width/height).
+         Esto corrige desfases por escalado CSS o devicePixelRatio sin tocar app.js. -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const oldCanvas = document.getElementById('pdfCanvas');
+        if (!oldCanvas) return;
+
+        // Clonar el canvas para eliminar listeners previamente añadidos por app.js
+        const canvas = oldCanvas.cloneNode(true);
+        oldCanvas.parentNode.replaceChild(canvas, oldCanvas);
+
+        canvas.addEventListener('click', function (e) {
+            try {
+                // Asegurarnos de que las variables globales del app.js existen
+                if (!window.isPlacingSignature || !window.signedImageBase64) return;
+
+                const rect = canvas.getBoundingClientRect();
+                const clickX = e.clientX - rect.left;
+                const clickY = e.clientY - rect.top;
+
+                // Coordenadas internas del canvas (en pixels) usadas por pdf.js
+                const internalW = canvas.width;
+                const internalH = canvas.height;
+
+                // Escalar click -> coordenadas internas
+                const scaleX = rect.width ? (internalW / rect.width) : 1;
+                const scaleY = rect.height ? (internalH / rect.height) : 1;
+
+                window.signaturePosition = window.signaturePosition || {};
+                window.signaturePosition.clickX = clickX * scaleX;
+                window.signaturePosition.clickY = clickY * scaleY;
+
+                // Llamar a la función de preview del app (debe existir)
+                if (typeof window.drawSignaturePreview === 'function') {
+                    window.drawSignaturePreview();
+                    if (typeof window.updateStatus === 'function') {
+                        window.updateStatus('Firma posicionada. Listo para descargar.');
+                    }
+                }
+            } catch (err) {
+                console.error('Error manejando click en canvas:', err);
+            }
+        });
+    });
+    </script>
 </body>
 </html>
