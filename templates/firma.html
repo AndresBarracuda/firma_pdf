@@ -37,5 +37,33 @@
     </div>
     
     <script src="{% static 'js/app.js' %}"></script>
+    <!-- Sincronizar tamaño del canvas con sus atributos width/height para evitar desfases
+         causados por escalado CSS en distintos dispositivos. No modifica app.js. -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const canvas = document.getElementById('pdfCanvas');
+        if (!canvas) return;
+
+        const syncStyleSize = () => {
+            try {
+                const w = canvas.width;
+                const h = canvas.height;
+                if (w && canvas.style.width !== w + 'px') canvas.style.width = w + 'px';
+                if (h && canvas.style.height !== h + 'px') canvas.style.height = h + 'px';
+            } catch (e) {
+                console.error('Error sincronizando canvas size:', e);
+            }
+        };
+
+        // Sincronizar ahora y cada vez que cambien los atributos width/height
+        syncStyleSize();
+
+        const observer = new MutationObserver(() => syncStyleSize());
+        observer.observe(canvas, { attributes: true, attributeFilter: ['width', 'height'] });
+
+        // También sincronizar tras redimensionado de ventana (por si hay reflow)
+        window.addEventListener('resize', () => setTimeout(syncStyleSize, 50));
+    });
+    </script>
 </body>
 </html>
