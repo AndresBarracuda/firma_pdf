@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firmar PDF con UGEE UG0502</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/sytle2.css' %}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Aplicación de Firma Digital con UGEE</h1>
+        
+        <div class="section">
+            <label for="pdfInput">Cargar PDF:</label>
+            <input type="file" id="pdfInput" accept=".pdf">
+        </div>
+        
+        <div class="section">
+            <button id="connectBtn" class="btn">Conectar a Tableta UGEE</button>
+            <button id="signBtn" class="btn" disabled>Iniciar Firma</button>
+            <button id="fingerprintBtn" class="btn" disabled>Capturar Huella</button>
+            <button id="signFingerBtn" class="btn" disabled>Firma y Huella</button>
+        </div>
+        
+        <div class="section">
+            <canvas id="pdfCanvas" class="pdf-preview"></canvas>
+        </div>
+        
+        <div class="section">
+            <button id="downloadBtn" class="btn" disabled>Descargar PDF Firmado</button>
+        </div>
+        
+        <div id="status" class="status"></div>
+    </div>
+    
+    <script src="{% static 'js/app.js' %}"></script>
+</body>
+</html>
