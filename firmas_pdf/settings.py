@@ -28,8 +28,8 @@ DEBUG = False
 
 ALLOWED_HOSTS = [
     'superb-miracle-production.up.railway.app',
+    'firmapdf-production.up.railway.app',
 ]
-
 
 # Application definition
 
