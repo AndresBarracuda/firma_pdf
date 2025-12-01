@@ -24,10 +24,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-298o$-+!1wg7%p9!hw&8ry^wdcg3k-t5&y6@rrk3610cdys&oh'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
     'firmapdf-production.up.railway.app',
+    '127.0.1.1',
+    '192.168.0.12',
+    'localhost',
+    '127.0.0.1',
+    'unemerging-unseraphically-vinita.ngrok-free.dev',
+
 ]
 
 
@@ -39,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'import_export',
     'firmas',
 ]
 
@@ -109,7 +116,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'es-co'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Bogota'
 
 USE_I18N = True
 

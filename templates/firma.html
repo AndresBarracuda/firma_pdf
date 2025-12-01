@@ -6,110 +6,110 @@
     <title>Firmar PDF con UGEE UG0502</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/style2.css' %}">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+
+    
+    <script src="{% static 'js/pdf.min.js' %}"></script>
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = "{% static 'js/pdf.worker.min.js' %}";
+    </script>
+
+    
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
 </head>
 <body>
+    <header class="site-header">
+        <div class="header-inner">
+            <div class="header-left">
+                <img src="{% static 'images/Manta_ray.svg' %}" alt="Logo" class="header-logo">
+                <div class="header-brand">
+                    <div class="brand-title">Sistemas Barracuda S.A.S.</div>
+                    <div class="brand-sub">Plataforma de Firma Digital</div>
+                </div>
+            </div>
+            <div class="header-center">
+                <h1 class="header-title">Manta Ray Firma Digital</h1>
+            </div>
+            <div class="header-right">
+                <button id="themeToggleBtn" class="btn secondary" title="Cambiar tema" aria-label="Alternar tema">🌙</button>
+            </div>
+        </div>
+    </header>
+
+    <aside class="side-menu">
+        <div class="side-inner">
+            <div class="side-file">
+                <label for="pdfInput" style="font-weight:600;margin-bottom:6px;display:inline-block">Cargar PDF:</label>
+                <input type="file" id="pdfInput" accept=".pdf" style="display:none">
+                <label for="pdfInput" class="btn upload-btn full">Seleccionar archivo</label>
+                <span id="pdfFileName" class="file-name" style="display:block;margin-top:6px;font-size:13px;"></span>
+            </div>
+            <div class="side-buttons">
+                <button id="connectBtn" class="btn full">Conectar a Tableta UGEE</button>
+                <button id="signBtn" class="btn full" disabled>Iniciar Firma</button>
+                <button id="fingerprintBtn" class="btn full" disabled>Capturar Huella</button>
+                <button id="signFingerBtn" class="btn full" disabled>Firma y Huella</button>
+                <button id="downloadSdkBtn" class="btn secondary full">Descargar Server SDK</button>
+            </div>
+            <div class="side-sigs">
+                <h4 style="margin-top:10px;margin-bottom:6px;font-size:13px;">Firmas colocadas</h4>
+                <div id="signaturesList" style="display:block;max-height:240px;overflow:auto"></div>
+                <button id="finishPlacementBtn" class="btn full" style="margin-top:8px;">Terminar colocación</button>
+                <button id="clearSigsBtn" class="btn secondary full" style="margin-top:8px;">Limpiar</button>
+                <div id="sideZoomControls" class="side-zoom" style="display:none;margin-top:10px;">
+                    <h4 style="font-size:13px;margin-bottom:6px;">Zoom</h4>
+                    <div class="zoom-controls" style="display:flex;align-items:center;gap:8px;">
+                        <button id="zoomOutBtn" class="btn" title="Zoom out">−</button>
+                        <input id="zoomRange" type="range" min="0.5" max="2.5" step="0.1" value="1" style="width:120px;">
+                        <button id="zoomInBtn" class="btn" title="Zoom in">+</button>
+                        <span id="zoomLabel" style="min-width:56px;text-align:center;font-weight:600">100%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
     <div class="container">
-        <h1>Aplicación de Firma Digital con UGEE</h1>
-        
         <div class="section">
-            <label for="pdfInput">Cargar PDF:</label>
-            <input type="file" id="pdfInput" accept=".pdf">
+            <div class="section" id="pageControls" style="display:none; align-items:center; gap:8px;">
+            <button id="prevPageBtn" class="btn">Página ‹</button>
+            <button id="nextPageBtn" class="btn">› Página</button>
+            <span id="pageInfo">Página 0 / 0</span>
+            <input type="number" id="pageNumberInput" min="1" style="width:70px;">
+            <button id="goPageBtn" class="btn">Ir</button>
         </div>
-        
-        <div class="section">
-            <button id="connectBtn" class="btn">Conectar a Tableta UGEE</button>
-            <button id="signBtn" class="btn" disabled>Iniciar Firma</button>
-            <button id="fingerprintBtn" class="btn" disabled>Capturar Huella</button>
-            <button id="signFingerBtn" class="btn" disabled>Firma y Huella</button>
-        </div>
-        
-        <div class="section">
-            <canvas id="pdfCanvas" class="pdf-preview"></canvas>
-        </div>
-        
-        <div class="section">
             <button id="downloadBtn" class="btn" disabled>Descargar PDF Firmado</button>
         </div>
-        
+        <div class="section">
+            <div id="dropZone" class="drop-zone">
+                <div class="drop-zone-inner">
+                    <strong>Arrastra aquí un PDF</strong>
+                    <div style="font-size:13px;margin-top:6px;">o haz clic para seleccionar un archivo</div>
+                </div>
+            </div>
+            <canvas id="pdfCanvas" class="pdf-preview" style="display:none"></canvas>
+        </div>
+        <div class="section">
+            <div class="section" id="pageControls" style="display:none; align-items:center; gap:8px;">
+            <button id="prevPageBtn" class="btn">Página ‹</button>
+            <button id="nextPageBtn" class="btn">› Página</button>
+            <span id="pageInfo">Página 0 / 0</span>
+            <input type="number" id="pageNumberInput" min="1" style="width:70px;">
+            <button id="goPageBtn" class="btn">Ir</button>
+        </div>
+            <button id="downloadBtn" class="btn" disabled>Descargar PDF Firmado</button>
+        </div>       
+
         <div id="status" class="status"></div>
     </div>
-    
-    <script src="{% static 'js/app.js' %}"></script>
-    <!-- Sincronizar tamaño del canvas con sus atributos width/height para evitar desfases
-         causados por escalado CSS en distintos dispositivos. No modifica app.js. -->
-    <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const canvas = document.getElementById('pdfCanvas');
-        if (!canvas) return;
 
-        const syncStyleSize = () => {
-            try {
-                const w = canvas.width;
-                const h = canvas.height;
-                if (w && canvas.style.width !== w + 'px') canvas.style.width = w + 'px';
-                if (h && canvas.style.height !== h + 'px') canvas.style.height = h + 'px';
-            } catch (e) {
-                console.error('Error sincronizando canvas size:', e);
-            }
-        };
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-left">© Sistemas Barracuda S.A.S.</div>
+            <div class="footer-right">Todos los derechos reservados.</div>
+        </div>
+    </footer>
 
-        // Sincronizar ahora y cada vez que cambien los atributos width/height
-        syncStyleSize();
-
-        const observer = new MutationObserver(() => syncStyleSize());
-        observer.observe(canvas, { attributes: true, attributeFilter: ['width', 'height'] });
-
-        // También sincronizar tras redimensionado de ventana (por si hay reflow)
-        window.addEventListener('resize', () => setTimeout(syncStyleSize, 50));
-    });
-    </script>
-    <!-- Reemplazar el listener de click del canvas por uno que calcule coordenadas
-         en el sistema de coordenadas interno del canvas (canvas.width/height).
-         Esto corrige desfases por escalado CSS o devicePixelRatio sin tocar app.js. -->
-    <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const oldCanvas = document.getElementById('pdfCanvas');
-        if (!oldCanvas) return;
-
-        // Clonar el canvas para eliminar listeners previamente añadidos por app.js
-        const canvas = oldCanvas.cloneNode(true);
-        oldCanvas.parentNode.replaceChild(canvas, oldCanvas);
-
-        canvas.addEventListener('click', function (e) {
-            try {
-                // Asegurarnos de que las variables globales del app.js existen
-                if (!window.isPlacingSignature || !window.signedImageBase64) return;
-
-                const rect = canvas.getBoundingClientRect();
-                const clickX = e.clientX - rect.left;
-                const clickY = e.clientY - rect.top;
-
-                // Coordenadas internas del canvas (en pixels) usadas por pdf.js
-                const internalW = canvas.width;
-                const internalH = canvas.height;
-
-                // Escalar click -> coordenadas internas
-                const scaleX = rect.width ? (internalW / rect.width) : 1;
-                const scaleY = rect.height ? (internalH / rect.height) : 1;
-
-                window.signaturePosition = window.signaturePosition || {};
-                window.signaturePosition.clickX = clickX * scaleX;
-                window.signaturePosition.clickY = clickY * scaleY;
-
-                // Llamar a la función de preview del app (debe existir)
-                if (typeof window.drawSignaturePreview === 'function') {
-                    window.drawSignaturePreview();
-                    if (typeof window.updateStatus === 'function') {
-                        window.updateStatus('Firma posicionada. Listo para descargar.');
-                    }
-                }
-            } catch (err) {
-                console.error('Error manejando click en canvas:', err);
-            }
-        });
-    });
-    </script>
+    <!-- Tu app -->
+    <script src="{% static 'js/app.js' %}?static_tk={{ static_tk }}"></script>
 </body>
 </html>

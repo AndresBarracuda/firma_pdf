@@ -1,12 +1,12 @@
 import base64
 import imghdr
 import uuid
-
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
 from django.core.files.base import ContentFile
-
+from datetime import datetime
+from django.utils import timezone
 from .models import Signature
 
 
@@ -78,3 +78,11 @@ def upload_signature(request):
 @csrf_exempt
 def ping(request):
 	return JsonResponse({'ok': True})
+
+
+def generate_id_signature(request):
+	now = timezone.localtime(timezone.now())
+	micro =f"{now.microsecond:06d}"
+	fecha_id = f"{now:%Y%m%d %H:%M:%S}.{micro}"
+
+	return JsonResponse({"id": fecha_id})
